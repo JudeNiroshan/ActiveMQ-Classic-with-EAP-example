@@ -7,7 +7,7 @@ workflows. Intentionally used 2 queues just to show the configurations.
 
 ![overview](./docs/overview.png)
 
-## EAP configurations ⚙️
+## Red Hat Middleware EAP configurations ⚙️
 
 You need to use activemq-rar.rar adapter in order to connect 
 EAP with a JMS implementation such as activemq classic (not artemis).
