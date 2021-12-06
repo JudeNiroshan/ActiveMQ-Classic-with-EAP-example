@@ -1,5 +1,5 @@
-# ActiveMQ-Classic-with-EAP-example
-Apache ActiveMQ classic setup with EAP 7.x
+# ActiveMQ classic with Red Hat Middleware EAP Demo
+Apache activeMQ classic setup with Red Hat Middleware EAP 7.x
 
 ## What is demonstrated here? 🤔
 2 queues have been used to demonstrate the producer and consumer 
