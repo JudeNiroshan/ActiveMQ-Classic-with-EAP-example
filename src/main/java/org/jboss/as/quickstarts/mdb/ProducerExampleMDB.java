@@ -35,13 +35,7 @@ import static org.jboss.as.quickstarts.Constants.TMP_QUEUE_NAME;
 
 @MessageDriven(name = TMP_QUEUE_NAME, activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-//    @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:jboss/TestQueue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = TMP_QUEUE_NAME),
-//        @ActivationConfigProperty(propertyName = "useJNDI", propertyValue = "true"),
-
-//    @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
-//        @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "4"),
-//        @ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "600")
 })
 public class ProducerExampleMDB implements MessageListener {
 
