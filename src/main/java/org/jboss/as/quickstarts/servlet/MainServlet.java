@@ -17,11 +17,9 @@
 package org.jboss.as.quickstarts.servlet;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
-import javax.jms.JMSContext;
 import javax.jms.JMSDestinationDefinition;
 import javax.jms.JMSDestinationDefinitions;
 import javax.jms.JMSException;
@@ -49,16 +47,13 @@ import static org.jboss.as.quickstarts.Constants.TMP_QUEUE_NAME;
         }
 )
 
-@WebServlet("/hello")
+@WebServlet("/")
 public class MainServlet extends HttpServlet {
 
     private static final long serialVersionUID = -8314035702649252239L;
 
     @Resource(mappedName = "java:/AMQXAConnectionFactory")
     private ConnectionFactory connectionFactory;
-
-    @Inject
-    private JMSContext context;
 
     @Resource(lookup = "java:/queue/" + TMP_QUEUE_NAME)
     private Queue queue;
@@ -67,37 +62,32 @@ public class MainServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
-        out.write("<h1>Quickstart: Example demonstrates the use of <strong>JMS 2.0</strong> and <strong>EJB 3.2 Message-Driven Bean</strong> in JBoss EAP.</h1>");
+        out.write("<h1>Quickstart: Example demonstrates the use of <strong>JMS 2.0</strong> and " +
+                "<strong>EJB 3.2 Message-Driven Bean</strong> in JBoss EAP.</h1>");
         try {
             final Destination destination = queue;
+            final String text = "This is a test message.";
 
-            out.write("<p>Sending messages to <em>" + destination + "</em></p>");
-            out.write("<h2>The following messages will be sent to the destination:</h2>");
+            out.write("<p>Sending message to <em>" + destination + "</em></p>" +
+                    "<h2>The following message will be sent to the destination:</h2>");
 
+            try {
+                Connection connection = connectionFactory.createConnection();
+                Session session = connection.createSession(false, Session.SESSION_TRANSACTED);
+                MessageProducer producer = session.createProducer(destination);
 
-            for (int i = 0; i < 1; i++) {
-                String text = "This is message " + (i + 1);
-                context.createProducer().send(destination, text);
+                final TextMessage message = session.createTextMessage(text);
+                producer.send(message);
+                Thread.sleep(100);
 
-                Connection connection = null;
-                try {
-                    connection = connectionFactory.createConnection();
-                    Session session = connection.createSession(false, Session.SESSION_TRANSACTED);
-                    MessageProducer producer = session.createProducer(destination);
-                    TextMessage message = session.createTextMessage(i + ". message sent");
-                    System.out.println("Sending to destination: " + destination.toString() + " this text: '" + message.getText());
-                    producer.send(message);
-
-                    Thread.sleep(100);
-
-                    producer.close();
-                    session.close();
-                } catch (JMSException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-                out.write("Message (" + i + "): " + text + "</br>");
+                producer.close();
+                session.close();
+            } catch (JMSException | InterruptedException e) {
+                e.printStackTrace();
             }
-            out.write("<p><i>Go to your JBoss EAP server console or server log to see the result of messages processing.</i></p>");
+            out.write("Message : " + text + "</br>" +
+                    "<p><i>Go to your JBoss EAP server console or server log to see the result of messages " +
+                    "processing.</i></p>");
         } finally {
             out.close();
         }
